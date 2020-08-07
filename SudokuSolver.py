@@ -7,7 +7,7 @@ class SudokuSolver():
             exit()
         for i in range(self.sudokuSide):  # Is it an valid Sudoku?
             for j in range(self.sudokuSide):
-                if not self.checkNum((i, j), self.sudoku[i][j]):
+                if self.sudoku[i][j] != 0 and not self.checkNum((i, j), self.sudoku[i][j]):
                     print("It is not a valid Sudoku")
                     exit()
 
@@ -22,7 +22,7 @@ class SudokuSolver():
 
         for i in range(blockPos[0], blockPos[0] + 3):  # 3x3 Block Check
             for j in range(blockPos[1], blockPos[1] + 3):
-                if num == self.sudoku[i][j]:
+                if num == self.sudoku[i][j] and (i, j) != pos:
                     return False
 
         return True
