@@ -1,3 +1,13 @@
+import tkinter as tk
+from time import sleep
+class Cell:
+    def __init__(self, master=None, num=0, x=0, y=0):
+        self.cell = tk.Label(master, text=num).grid(row=y, column=x)
+
+    def setLabel(self, master, num, x, y, color):
+        self.cell = tk.Label(master, text=num, bg=color).grid(row=y, column=x)
+
+
 class SudokuSolver():
     def __init__(self, sudoku: list):
         self.sudoku = sudoku
@@ -10,6 +20,14 @@ class SudokuSolver():
                 if self.sudoku[i][j] != 0 and not self.checkNum((i, j), self.sudoku[i][j]):
                     print("It is not a valid Sudoku")
                     exit()
+        self.root = tk.Tk()
+
+        self.tkArray = [[Cell() for i in range(9)] for i in range(9)]
+
+        for i in range(9):
+            for j in range(9):
+                self.tkArray[i][j] = Cell(self.root, sudoku[i][j], j, i)
+
 
     def checkNum(self, pos: tuple, num: int):
         for i in range(self.sudokuSide):  # Vertical and Horizontal check
@@ -40,12 +58,18 @@ class SudokuSolver():
         if emptyPos is None:  # If there is no zero solving process is completed
             return True
         for num in range(1, 10):  # Try numbers 1 to 10
+            self.tkArray[emptyPos[0]][emptyPos[1]].setLabel(self.root, 0, emptyPos[1], emptyPos[0], "green")
+            self.root.update_idletasks()
             if self.checkNum(emptyPos, num):  # If current num looks like valid
                 self.sudoku[emptyPos[0]][emptyPos[1]] = num  # Change it to num
+                self.tkArray[emptyPos[0]][emptyPos[1]].setLabel(self.root, num, emptyPos[1], emptyPos[0], "white")
+                self.root.update_idletasks()
                 if self.solve():  # Go to next empty block
                     return True
                 else:  # Revert changes
                     self.sudoku[emptyPos[0]][emptyPos[1]] = 0
+                    self.tkArray[emptyPos[0]][emptyPos[1]].setLabel(self.root, 0, emptyPos[1], emptyPos[0], "white")
+                    self.root.update_idletasks()
 
         return False
 
@@ -61,7 +85,8 @@ class SudokuSolver():
 
     def solveAndPrint(self): # Solves and prints
         if self.solve():
-            self.printSudoku()
+            self.root.mainloop()
+
         else:
             print("There is no solution to this")
 
